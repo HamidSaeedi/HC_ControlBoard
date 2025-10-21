@@ -234,6 +234,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if(htim->Instance == TIM17)
   {
 	  //TACHO logic
+	  if(iov.tacho1_counter<50)
+	  {
+
+			iof.tacho1=1;
+			iov.tacho1_counter=0;
+	  }
+
+	   if(iov.tacho2_counter<50)
+	   {
+			iof.tacho2=1;
+			iov.tacho2_counter=0;
+	   }
+
 
   }
   /* USER CODE END Callback 1 */

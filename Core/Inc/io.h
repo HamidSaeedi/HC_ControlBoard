@@ -8,12 +8,16 @@
 #define INRUSH_DELAY 1
 #define FAN_DIS_TIMER 180
 #define ADC_PARAMETER 5
-#define ADC_SAMPLE_NUM 100
+#define ADC_SAMPLE_NUM 150
 #define V25_VOLTAGE_MV 1430 //mV at 25C (typical for many families)
 #define VREF_MV 3300
 #define ADC_RESOLUTION 4095
 #define TEMP_SLOPE 4.3f
 #define REF_TEMP 25.0f
+
+#define ADC_RIM_FREQ 72000000
+#define ADC_TIM_PRE_SCALE
+#define ADC_TIM_PERIODE_COUNT 10000
 
 #define FAN1_EN HAL_GPIO_WritePin(FAN_GPIO_Port, FAN_Pin, 1)
 #define FAN2_EN HAL_GPIO_WritePin(FAN1_GPIO_Port, FAN1_Pin, 1)
