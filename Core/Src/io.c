@@ -49,6 +49,30 @@ void io_function(void)
 	{
 		FAN1_EN;
 		FAN2_EN;
+		iov.tacho1_error_count++;
+		iov.tacho2_error_count++;
+		if(iov.tacho1_error_count>TACHO_ERROR_COUNT)
+		{
+			iov.tacho1_error_count=0;
+			if(iov.tacho1_counter<50)
+		    {
+
+				iof.tacho1=1;
+				iov.tacho1_counter=0;
+			}
+
+		}
+		if(iov.tacho2_error_count>TACHO_ERROR_COUNT)
+		{
+			iov.tacho2_error_count=0;
+			if(iov.tacho2_counter<50)
+		    {
+
+				iof.tacho2=1;
+				iov.tacho2_counter=0;
+			}
+
+		}
 		iof.fan=1;
 		if(iov.pfc_counter<PFC_DELAY)
 		{
@@ -62,7 +86,7 @@ void io_function(void)
 		}
 
 		iof.fan_timer=0;
-		iov.fan_timer=0;
+		iov.fan_disable_counter=0;
 		if( (iof.tacho1==0) & (iof.tacho2==0) & (iof.dc_okay==1) & (iof.pfc==1) )
 		{
 			if(iov.inrush_counter<INRUSH_DELAY)
@@ -111,13 +135,16 @@ void io_function(void)
 		iof.inrush=0;
 		iov.pfc_counter=0;
 		iof.pfc=0;
-		if(iov.fan_timer>180)
+		if(iov.fan_disable_counter>FAN_DISABLE_DELAY_COUNT)
 		{
 			FAN1_DIS;
 			FAN2_DIS;
 			iof.fan=0;
-			iof.fan_timer=0;
-			iov.fan_timer=0;
+			iov.fan_disable_counter=0;
+		}
+		else
+		{
+			iov.fan_disable_counter++;
 		}
 		iov.voltage_sp=0;
 		iov.current_sp=0;

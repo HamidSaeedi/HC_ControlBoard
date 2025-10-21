@@ -214,43 +214,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 }
 
 
-/**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM7 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
-  */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  /* USER CODE BEGIN Callback 0 */
 
-  /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM7) {
-    HAL_IncTick();
-  }
-  /* USER CODE BEGIN Callback 1 */
-  if(htim->Instance == TIM17)
-  {
-	  //TACHO logic
-	  if(iov.tacho1_counter<50)
-	  {
-
-			iof.tacho1=1;
-			iov.tacho1_counter=0;
-	  }
-
-	   if(iov.tacho2_counter<50)
-	   {
-			iof.tacho2=1;
-			iov.tacho2_counter=0;
-	   }
-
-
-  }
-  /* USER CODE END Callback 1 */
-}
 
 
 /* USER CODE END Application */
