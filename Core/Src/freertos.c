@@ -194,21 +194,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	if(GPIO_Pin==GPIO_PIN_6)
 	{
 		iov.tacho1_counter++;
-		if(iov.tacho1_counter>=50)
-		{
-			iof.tacho1=0;
-			iov.tacho1_counter=0;
-		}
+
 
 	}
 	if(GPIO_Pin==GPIO_PIN_13)
 	{
 		iov.tacho2_counter++;
-		if(iov.tacho2_counter>=50)
-		{
-			iof.tacho2=0;
-			iov.tacho2_counter=0;
-		}
+
 
 	}
 }

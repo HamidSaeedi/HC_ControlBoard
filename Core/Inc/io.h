@@ -8,7 +8,7 @@
 #define INRUSH_DELAY 1
 #define FAN_DIS_TIMER 180
 #define ADC_PARAMETER 5
-#define ADC_SAMPLE_NUM 150
+#define ADC_SAMPLE_NUM 500
 #define V25_VOLTAGE_MV 1430 //mV at 25C (typical for many families)
 #define VREF_MV 3300
 #define ADC_RESOLUTION 4095

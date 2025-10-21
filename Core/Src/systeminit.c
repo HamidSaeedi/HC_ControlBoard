@@ -14,6 +14,8 @@ void sysinit_function(void)
 
 	HAL_ADC_Start_DMA(&hadc1,iov.adcbuf,(uint32_t) (ADC_PARAMETER * ADC_SAMPLE_NUM));
 	HAL_TIM_Base_Start(&htim3);
+	iov.tacho1_counter=50;
+	iov.tacho2_counter=50;
 
 
 }

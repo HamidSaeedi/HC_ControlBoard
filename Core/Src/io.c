@@ -49,30 +49,8 @@ void io_function(void)
 	{
 		FAN1_EN;
 		FAN2_EN;
-		iov.tacho1_error_count++;
-		iov.tacho2_error_count++;
-		if(iov.tacho1_error_count>TACHO_ERROR_COUNT)
-		{
-			iov.tacho1_error_count=0;
-			if(iov.tacho1_counter<50)
-		    {
 
-				iof.tacho1=1;
-				iov.tacho1_counter=0;
-			}
 
-		}
-		if(iov.tacho2_error_count>TACHO_ERROR_COUNT)
-		{
-			iov.tacho2_error_count=0;
-			if(iov.tacho2_counter<50)
-		    {
-
-				iof.tacho2=1;
-				iov.tacho2_counter=0;
-			}
-
-		}
 		iof.fan=1;
 		if(iov.pfc_counter<PFC_DELAY)
 		{
@@ -168,6 +146,41 @@ void io_function(void)
 	else
 	{
 		iof.transformer_overheat = 0;
+	}
+
+	iov.tacho1_error_count++;
+	iov.tacho2_error_count++;
+	if(iov.tacho1_error_count>TACHO_ERROR_COUNT)
+	{
+		iov.tacho1_error_count=0;
+		if(iov.tacho1_counter<50 && iof.enable_hc)
+	    {
+
+			iof.tacho1=1;
+			iov.tacho1_counter=0;
+		}
+		else if(iov.tacho1_counter>=50){
+			iof.tacho1=0;
+			iov.tacho1_counter=0;
+		}
+
+
+
+	}
+	if(iov.tacho2_error_count>TACHO_ERROR_COUNT)
+	{
+		iov.tacho2_error_count=0;
+		if(iov.tacho2_counter<50 && iof.enable_hc)
+	    {
+
+			iof.tacho2=1;
+			iov.tacho2_counter=0;
+		}
+		else if(iov.tacho2_counter>=50){
+			iof.tacho2=0;
+			iov.tacho2_counter=0;
+		}
+
 	}
 }
 
