@@ -2,15 +2,17 @@
 #include "io.h"
 struct COM_FLAG com_flag;
 struct COM_DATA com_data;
-uint8_t mycount=0;
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
-   com_flag.newdata=1;
-   mycount++;
-   if(mycount>29)
-	   mycount=0;
-   HAL_UART_Receive_IT(&huart2,(uint8_t*)&com_data.rec_buf, 16);
+	com_data.rx_size = Size;
+	if (com_data.rx_size == 16)
+	{
+		com_flag.newdata=1;
+		com_data.packet_lost_counter=0;
+	}
+	COM_MODE_RX
+	HAL_UARTEx_ReceiveToIdle_IT(&huart2, com_data.rx_buffer, RX_BUFFER_SIZE);
 }
 void com_data_parser(void)
 {
@@ -19,79 +21,33 @@ void com_data_parser(void)
 	uint8_t i=0;
 	if(com_flag.newdata==1)
 	{
-		/*
 		com_flag.newdata=0;
-		switch (com_flag.state)
+		if ((com_data.rx_buffer[0] == SLAVE_ADDR) && (com_data.rx_buffer[1] == HEADER) && (com_data.rx_buffer[15] == END_OF_DATA_FLAG))
 		{
-			case START:
-				if(com_data.rec_buf==SLAVE_ADDR)
+				for(i=2;i<15;i++)
 				{
-					com_flag.state = ADDR_RESOLVED;
+					com_data.buf[i-2] = com_data.rx_buffer[i];
 				}
-			break;
-			case ADDR_RESOLVED:
-				if(com_data.rec_buf==HEADER)
-				{
-					com_flag.state = DATA_RECEPTION;
-					com_data.index = 0;
-				}
-				else
-				{
-					com_flag.state = START;
-				}
-			break;
-			case DATA_RECEPTION:
-				if(com_data.rec_buf!=END_OF_DATA_FLAG)
-				{
-					com_data.buf[com_data.index] = com_data.rec_buf;
-					com_data.index++;
-				}
-				else if(com_data.rec_buf==END_OF_DATA_FLAG)
-				{
-					COM_MODE_TX
-					//check the sizeof it should be problem replace it with 16 .
-					HAL_UART_Transmit(&huart2,(uint8_t*) com_data.tx_buf,16, HAL_MAX_DELAY);
-					com_flag.state = START;
-					com_flag.newdatatransaction=1;
-					COM_MODE_RX
-					com_flag.error=0;
-				}
-			break;
-		}
-		*/
-		com_flag.newdata=0;
-		com_data.packet_lost_counter=0;
-		if( (com_data.rec_buf[0]==SLAVE_ADDR) && com_data.rec_buf[1]==HEADER )
-		{
-			for(i=2;i<16;i++)
-			{
-				com_data.buf[i-2] = com_data.rec_buf[i];
-			}
-			COM_MODE_TX
-			//check the sizeof it should be problem replace it with 16 .
-			HAL_UART_Transmit(&huart2,(uint8_t*) com_data.tx_buf,16, HAL_MAX_DELAY);
-			com_flag.state = START;
-			com_flag.newdatatransaction=1;
-			COM_MODE_RX
-			com_flag.error=0;
-			memset(com_data.rec_buf,0,16);
+				COM_MODE_TX
+				HAL_UART_Transmit(&huart2,(uint8_t*) com_data.tx_buf,16, HAL_MAX_DELAY);
+				com_flag.state = START;
+				com_flag.newdatatransaction=1;
+				COM_MODE_RX
+				com_flag.error=0;
+				memset(com_data.rx_buffer,0,RX_BUFFER_SIZE);
 		}
 		HAL_GPIO_TogglePin(COM_LED_GPIO_Port, COM_LED_Pin);
-
-
-
-
 	}
 	else
 	{
 		com_data.packet_lost_counter++;
-
-		if(com_data.packet_lost_counter>=10)
+		if(com_data.packet_lost_counter>=25)
 		{
 			com_flag.error=1;
 			com_data.error_counter++;
 			com_data.packet_lost_counter=0;
-			HAL_UART_Receive_IT(&huart2,(uint8_t*)&com_data.rec_buf, 16);
+			COM_MODE_RX
+			HAL_UARTEx_ReceiveToIdle_IT(&huart2, com_data.rx_buffer, RX_BUFFER_SIZE);
 			HAL_GPIO_WritePin(COM_LED_GPIO_Port, COM_LED_Pin, 1);
 		}
 	}

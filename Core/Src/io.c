@@ -107,7 +107,7 @@ void io_function(void)
 		PFC_DIS;
 		INRUSH_DIS;
 		HC_DIS;
-		HC_DIS;
+		HC_LED_DIS;
 		iof.fan_timer=0;
 		iov.inrush_counter=0;
 		iof.inrush=0;

@@ -133,7 +133,7 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(100);
+    osDelay(150);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -146,7 +146,7 @@ void comunication_function(void const * argument)
 	while(1)
 	{
 		com_data_parser();
-		osDelay(150);
+		osDelay(200);
 	}
 }
 
