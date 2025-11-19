@@ -165,7 +165,7 @@ void io_task(void const * argument)
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	uint32_t sumV=0,sumI=0,sumPot=0,sumT=0,sumVbat=0;
-	float temp_V_mv=0;
+	float temp_V_mv=0,VOUT=0,IOUT=0;
 	uint16_t i=0;
 	HAL_TIM_Base_Stop(&htim3);
 	for(i=0;i<(ADC_PARAMETER * ADC_SAMPLE_NUM);i+=ADC_PARAMETER)
@@ -176,8 +176,10 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 		sumT   += iov.adcbuf[i+3];
 		sumVbat+= iov.adcbuf[i+4];
 	}
-	iov.vout  = sumV   / (float) ADC_SAMPLE_NUM;
-	iov.iout  = sumI   / (float) ADC_SAMPLE_NUM;
+	VOUT = sumV   / (float) ADC_SAMPLE_NUM;
+	IOUT = sumI   / (float) ADC_SAMPLE_NUM;
+	iov.vout  = iov.vout * ALPHA + VOUT * BETA;
+	iov.iout  = iov.iout * ALPHA + IOUT * BETA;
 	iov.pot   = sumPot / (float) ADC_SAMPLE_NUM;
 	temp_V_mv = sumT   / (float) ADC_SAMPLE_NUM;
 	temp_V_mv = (temp_V_mv*VREF_MV) / ADC_RESOLUTION;

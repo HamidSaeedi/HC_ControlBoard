@@ -14,6 +14,8 @@
 #define ADC_RESOLUTION 4095
 #define TEMP_SLOPE 4.3f
 #define REF_TEMP 25.0f
+#define ALPHA 0.9
+#define BETA 0.1
 
 #define IO_TASK_DELAY 300
 #define FAN_DISABLE_DELAY_MS 180000  //uint32_t It should be multiple of the   IO_TASK_DELAY
